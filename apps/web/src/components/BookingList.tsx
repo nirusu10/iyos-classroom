@@ -1,4 +1,4 @@
-import type { Booking } from '../types'
+import type { Booking } from '@iyos-classroom/types'
 
 type BookingListProps = {
   bookings: Booking[]

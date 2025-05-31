@@ -1,5 +1,5 @@
+import type { BookingFormData } from '@iyos-classroom/types'
 import { useState, type ChangeEvent, type FormEvent } from 'react'
-import type { BookingFormData } from '../types'
 
 type BookingFormProps = {
   onSubmit: (data: BookingFormData) => boolean | void

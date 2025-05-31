@@ -7,7 +7,7 @@ import {
   type Status,
   type StoredBlockedSlot,
   type StoredBooking,
-} from '../types'
+} from '@iyos-classroom/types'
 
 /* Constants */
 const STORAGE_KEY = 'bookings'

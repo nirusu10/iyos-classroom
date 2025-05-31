@@ -3,7 +3,7 @@ import BookingForm from '../components/BookingForm'
 import BookingList from '../components/BookingList'
 import StatusMessage from '../components/StatusMessage'
 import { useBookings } from '../hooks/useBooking'
-import type { BookingFormData } from '../types'
+import type { BookingFormData } from '@iyos-classroom/types'
 
 const BookingPage = () => {
   const { bookings, addBooking, status, removeBooking, latestBookingId } =

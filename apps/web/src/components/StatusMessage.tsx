@@ -1,5 +1,5 @@
 import React from 'react'
-import type { Status } from '../types'
+import type { Status } from '../../../../packages/types'
 
 type Props = {
   status: Status | null

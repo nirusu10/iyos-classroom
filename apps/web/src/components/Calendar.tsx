@@ -6,8 +6,8 @@ import {
 } from 'react-big-calendar'
 import { enUS } from 'date-fns/locale'
 import { format, parse, startOfWeek, getDay } from 'date-fns'
-import type { Booking } from '../types'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
+import type { Booking } from '@iyos-classroom/types'
 
 type BookingCalendarProps = {
   bookings: Booking[]
