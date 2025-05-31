@@ -1,0 +1,17 @@
+{
+  "name": "iyos-classroom",
+  "version": "1.0.0",
+  "private": "true",
+  "main": "index.js",
+  "workspaces": [
+    "apps/web",
+    "server"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
