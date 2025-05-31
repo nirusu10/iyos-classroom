@@ -1,10 +1,18 @@
-import { addMinutes, parseISO } from 'date-fns'
+import { addMinutes } from 'date-fns'
 
-export const getStartEnd = (date: string, time: string, duration: number) => {
-  const startISO = `${date}T${time}`
-  const start = parseISO(startISO)
+export const getStartEnd = (
+  date: string,
+  time: string,
+  duration: number
+): { start: string; end: string } | null => {
+  const [hour, minute] = time.split(':').map(Number)
+  const local = new Date(date)
+  local.setHours(hour, minute, 0, 0)
 
-  const end = addMinutes(start, duration)
+  const end = addMinutes(local, duration)
 
-  return { start, end }
+  return {
+    start: local.toISOString(), // Converts to UTC correctly
+    end: end.toISOString(),
+  }
 }

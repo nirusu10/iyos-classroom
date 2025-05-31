@@ -11,14 +11,17 @@ export type Booking = {
   end: Date
 }
 
-export type StoredBooking = Omit<Booking, 'start' | 'end'> & {
-  start: string
-  end: string
+export type StoredBooking = {
+  id: string
+  name: string
+  start: string // ISO date string
+  end: string // ISO date string
 }
 
-export type StoredBlockedSlot = Omit<BlockedSlot, 'start' | 'end'> & {
-  start: string
-  end: string
+export type StoredBlockedSlot = {
+  id: string
+  start: string // ISO date string
+  end: string // ISO date string
 }
 
 export type Status = {

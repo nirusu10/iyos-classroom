@@ -1,100 +1,77 @@
 import { useEffect, useState } from 'react'
-import { v4 as uuidv4 } from 'uuid'
 import {
   type BlockedSlot,
   type Booking,
   type BookingFormData,
   type Status,
-  type StoredBlockedSlot,
-  type StoredBooking,
 } from '@iyos-classroom/types'
+import {
+  deleteBooking,
+  getBlockedSlots,
+  getBookings,
+  postBooking,
+} from '../api'
 
 /* Constants */
-const STORAGE_KEY = 'bookings'
-const BLOCKED_STORAGE_KEY = 'blockedSlots'
 const BOOKING_DURATION_MS = 50 * 60 * 1000
 
 export function useBookings() {
   const [bookings, setBookings] = useState<Booking[]>([])
   const [blockedSlots, setBlockedSlots] = useState<BlockedSlot[]>([])
   const [status, setStatus] = useState<Status | null>(null)
+  const [loading, setLoading] = useState(false)
   const [latestBookingId, setLatestBookingId] = useState<string | null>(null)
 
-  useEffect(() => {
-    const savedBookings = localStorage.getItem(STORAGE_KEY)
-    if (savedBookings) {
-      try {
-        const parsed: StoredBooking[] = JSON.parse(savedBookings)
-        const parsedBookings = parsed.map((booking) => {
-          return {
-            ...booking,
-            start: new Date(booking.start),
-            end: new Date(booking.end),
-          }
-        })
-        setBookings(
-          parsedBookings.sort((a, b) => a.start.getTime() - b.start.getTime())
-        )
-      } catch (error) {
-        console.error('Failed loading bookings from storage', error)
-      }
+  const convertToBookingDates = (data: Booking[]) => {
+    return data.map((booking) => ({
+      ...booking,
+      start: new Date(booking.start),
+      end: new Date(booking.end),
+    }))
+  }
+
+  const convertToBlockedSlotDates = (data: BlockedSlot[]) => {
+    return data.map((booking) => ({
+      ...booking,
+      start: new Date(booking.start),
+      end: new Date(booking.end),
+    }))
+  }
+
+  const fetchInitialData = async () => {
+    setLoading(true)
+    try {
+      const [bookingsData, blockedSlotsData] = await Promise.all([
+        getBookings(),
+        getBlockedSlots(),
+      ])
+      setBookings(convertToBookingDates(bookingsData))
+      setBlockedSlots(convertToBlockedSlotDates(blockedSlotsData))
+      setStatus(null)
+    } catch {
+      setStatus({ type: 'error', message: 'Failed to load data from server.' })
+    } finally {
+      setLoading(false)
     }
+  }
+
+  useEffect(() => {
+    fetchInitialData()
   }, [])
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings))
-  }, [bookings])
-
-  useEffect(() => {
-    const saved = localStorage.getItem(BLOCKED_STORAGE_KEY)
-    if (saved) {
-      try {
-        const parsed: StoredBlockedSlot[] = JSON.parse(saved)
-        const parsedBlockedSlots = parsed.map((slot) => ({
-          ...slot,
-          start: new Date(slot.start),
-          end: new Date(slot.end),
-        }))
-        setBlockedSlots(
-          parsedBlockedSlots.sort(
-            (a, b) => a.start.getTime() - b.start.getTime()
-          )
-        )
-      } catch (error) {
-        console.error('Failed loading blocked slots', error)
-      }
-    }
-  }, [])
-
-  useEffect(() => {
-    localStorage.setItem(BLOCKED_STORAGE_KEY, JSON.stringify(blockedSlots))
-  }, [blockedSlots])
-
-  useEffect(() => {
-    if (status) {
-      const timer = setTimeout(() => {
-        setStatus(null)
-      }, 3000)
-      return () => clearTimeout(timer)
-    }
-  }, [status])
-
-  useEffect(() => {
-    if (latestBookingId) {
-      const timer = setTimeout(() => setLatestBookingId(null), 3000)
-      return () => clearTimeout(timer)
-    }
-  }, [latestBookingId])
 
   const parseStartEndTime = (
     data: BookingFormData
   ): { start: Date; end: Date } => {
-    const start = new Date(`${data.date}T${data.time}`)
+    console.log('Input date:', data.date)
+    console.log('Input time:', data.time)
+    const start = new Date(`${data.date}T${data.time}:00.000Z`)
+    console.log('Start Date:', start.toString())
+    console.log('Start Date ISO:', start.toISOString())
     const end = new Date(start.getTime() + BOOKING_DURATION_MS) // 50 minutes = 1000 * 60 * 50 (ms)
     return { start, end }
   }
 
-  const addBooking = (data: BookingFormData) => {
+  const addBooking = async (data: BookingFormData) => {
     const { start, end } = parseStartEndTime(data)
 
     /* Conflict checks */
@@ -103,15 +80,12 @@ export function useBookings() {
       return false
     }
 
-    const isOverlapping = bookings.some(
-      (booking) => start < booking.end && end > booking.start
-    )
-    if (isOverlapping) {
+    if (bookings.some((b) => start < b.end && end > b.start)) {
       setStatus({ type: 'error', message: 'Time slot is already booked.' })
       return false
     }
 
-    if (isOverlappingBlockedSlots(start, end)) {
+    if (blockedSlots.some((slot) => start < slot.end && end > slot.start)) {
       setStatus({
         type: 'error',
         message: 'This time is blocked and cannot be booked.',
@@ -119,34 +93,42 @@ export function useBookings() {
       return false
     }
 
-    const newBooking: Booking = {
-      id: uuidv4(),
-      name: data.name,
-      start,
-      end,
+    try {
+      const newBooking = await postBooking({
+        name: data.name,
+        date: data.date,
+        time: data.time,
+      })
+
+      setBookings((prev) => [
+        ...prev,
+        {
+          ...newBooking,
+          start: new Date(newBooking.start),
+          end: new Date(newBooking.end),
+        },
+      ])
+      setLatestBookingId(newBooking.id)
+      setStatus({ type: 'success', message: 'Booking successful!' })
+      return true
+    } catch (error) {
+      console.error('Error adding booking:', error)
+      setStatus({ type: 'error', message: 'Failed to add booking.' })
+      return false
     }
-
-    setBookings((prev) => [...prev, newBooking])
-    setLatestBookingId(newBooking.id)
-    setStatus({ type: 'success', message: 'Booking successful!' })
-    return true
   }
 
-  const removeBooking = (id: string) => {
-    setBookings((prev) => prev.filter((booking) => booking.id !== id))
-    setStatus({ type: 'success', message: 'Booking removed.' })
-  }
-
-  const isOverlappingBlockedSlots = (start: Date, end: Date) => {
-    return blockedSlots.some((slot) => start < slot.end && end > slot.start)
-  }
-
-  const addBlockedSlot = (slot: BlockedSlot) => {
-    setBlockedSlots((prev) => [...prev, slot])
-  }
-
-  const removeBlockedSlot = (id: string) => {
-    setBlockedSlots((prev) => prev.filter((slot) => slot.id !== id))
+  const removeBooking = async (id: string) => {
+    try {
+      await deleteBooking(id)
+      setStatus({ type: 'success', message: 'Booking deleted successfully' })
+      setBookings((prev) => prev.filter((booking) => booking.id !== id))
+      return true
+    } catch (error) {
+      console.error('Error deleting booking:', error)
+      setStatus({ type: 'error', message: 'Failed to delete booking.' })
+      return false
+    }
   }
 
   return {
@@ -155,9 +137,8 @@ export function useBookings() {
     status,
     setStatus,
     blockedSlots,
-    addBlockedSlot,
-    removeBlockedSlot,
-    removeBooking,
     latestBookingId,
+    loading,
+    removeBooking,
   }
 }

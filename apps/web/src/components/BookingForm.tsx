@@ -23,6 +23,7 @@ const BookingForm = ({ onSubmit }: BookingFormProps) => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    console.log('Form input: ', formData.date, formData.time)
     const success = onSubmit(formData)
     if (success) {
       setFormData({ name: '', date: '', time: '' })

@@ -1,16 +1,9 @@
 import express = require('express')
 import cors = require('cors')
 import { v4 as uuidv4 } from 'uuid'
-import {
-  parseISO,
-  addMinutes,
-  isBefore,
-  areIntervalsOverlapping,
-  isValid,
-} from 'date-fns'
-import { StoredBlockedSlot, StoredBooking } from '@iyos-classroom/types'
+import { parseISO, isBefore, areIntervalsOverlapping, isValid } from 'date-fns'
+import { BlockedSlot, Booking } from '@iyos-classroom/types'
 import { readData, writeData } from './dataStore'
-import { getStartEnd } from './helpers'
 
 const app = express()
 const PORT = process.env.PORT || 4000
@@ -22,8 +15,6 @@ app.use((req, _, next) => {
   console.log(`${req.method} ${req.path}`)
   next()
 })
-
-const BOOKING_DURATION_MS = 50 * 60 * 1000
 
 app.get('/', (req: express.Request, res: express.Response) => {
   res.send('Hello from the backend!')
@@ -44,35 +35,39 @@ app.get(
 app.post(
   '/api/bookings',
   async (
-    req: express.Request<{}, {}, { name: string; date: string; time: string }>,
+    req: express.Request<{}, {}, { name: string; start: string; end: string }>,
     res: express.Response
   ) => {
-    const { name, date, time } = req.body
-    if (!name || !date || !time) {
-      return res.status(400).json({ error: 'Missing fields' })
+    const { name, start, end } = req.body
+    if (!name || !start || !end) {
+      console.error('Missing fields in booking request:', req.body)
+      return res.status(400).json({ message: 'Missing fields' })
     }
 
-    const { start, end } = getStartEnd(date, time, BOOKING_DURATION_MS)
-
-    if (!isValid(start)) {
-      return res.status(400).json({ error: 'Invalid date or time format' })
+    if (!isValid(parseISO(start)) || !isValid(parseISO(end))) {
+      console.error('Invalid time format')
+      return res.status(400).json({ message: 'Invalid time format' })
     }
 
-    if (isBefore(start, new Date())) {
-      return res.status(400).json({ error: 'Please select a future date' })
+    const startDate = parseISO(start)
+    const endDate = parseISO(end)
+
+    if (isBefore(startDate, new Date())) {
+      console.error('Start date already in the past.')
+      return res.status(400).json({ message: 'Please select a future date' })
     }
 
     const data = await readData()
 
     const hasBookingOverlap = data.bookings.some((booking) =>
       areIntervalsOverlapping(
-        { start, end },
+        { start: startDate, end: endDate },
         { start: parseISO(booking.start), end: parseISO(booking.end) }
       )
     )
 
     if (hasBookingOverlap) {
-      return res.status(409).json({ error: 'Time slot already booked' })
+      return res.status(409).json({ message: 'Time slot already booked' })
     }
 
     // Blocked slots
@@ -86,21 +81,24 @@ app.post(
     if (hasBlockedOverlap) {
       return res
         .status(409)
-        .json({ error: 'This time is blocked and cannot be booked' })
+        .json({ message: 'This time is blocked and cannot be booked' })
     }
 
-    const newBooking: StoredBooking = {
+    const newBooking: Booking = {
       id: uuidv4(),
       name,
-      start: start.toISOString(),
-      end: end.toISOString(),
+      start,
+      end,
     }
 
-    data.bookings.push(newBooking)
-
-    await writeData(data)
-
-    res.status(201).json(newBooking)
+    try {
+      data.bookings.push(newBooking)
+      await writeData(data)
+      res.status(201).json(newBooking)
+    } catch (error) {
+      console.error('Error adding booking: ', error)
+      return res.status(500).json({ message: 'Internal server error' })
+    }
   }
 )
 
@@ -134,28 +132,18 @@ app.get(
 app.post(
   '/api/blocked-slots',
   async (
-    req: express.Request<
-      {},
-      {},
-      { date: string; time: string; duration: number }
-    >,
+    req: express.Request<{}, {}, { name: string; start: string; end: string }>,
     res: express.Response
   ) => {
-    const { date, time, duration } = req.body
-    if (!date || !time) {
+    const { name, start, end } = req.body
+    if (!name || !start || !end) {
       return res.status(400).json({ error: 'Missing fields' })
     }
-    const { start, end } = getStartEnd(date, time, duration)
 
-    if (!duration || typeof duration !== 'number' || duration <= 0) {
-      return res.status(400).json({ error: 'Invalid duration' })
-    }
+    const startDate = parseISO(start)
+    const endDate = parseISO(end)
 
-    if (!isValid(start)) {
-      return res.status(400).json({ error: 'Invalid date or time format' })
-    }
-
-    if (isBefore(start, new Date())) {
+    if (isBefore(startDate, new Date())) {
       return res.status(400).json({ error: 'Please select a future date' })
     }
 
@@ -165,13 +153,13 @@ app.post(
     const hasOverlap =
       data.bookings.some((booking) =>
         areIntervalsOverlapping(
-          { start, end },
+          { start: startDate, end: endDate },
           { start: parseISO(booking.start), end: parseISO(booking.end) }
         )
       ) ||
       data.blockedSlots.some((slot) =>
         areIntervalsOverlapping(
-          { start, end },
+          { start: startDate, end: endDate },
           { start: parseISO(slot.start), end: parseISO(slot.end) }
         )
       )
@@ -183,10 +171,10 @@ app.post(
     }
 
     // save blocked slot
-    const newBlockedSlot: StoredBlockedSlot = {
+    const newBlockedSlot: BlockedSlot = {
       id: uuidv4(),
-      start: start.toISOString(),
-      end: end.toISOString(),
+      start: start,
+      end: end,
     }
 
     data.blockedSlots.push(newBlockedSlot)
@@ -210,6 +198,10 @@ app.delete(
   }
 )
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`)
-})
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`)
+  })
+}
+
+export default app

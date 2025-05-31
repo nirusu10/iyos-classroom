@@ -1,17 +1,17 @@
 import fs from 'fs/promises'
 import path from 'path'
-import { StoredBooking, StoredBlockedSlot } from '@iyos-classroom/types'
+import { BlockedSlot, Booking } from '@iyos-classroom/types'
 
-const DATA_PATH = path.join(__dirname, 'data.json')
+const PATH = path.join(__dirname, 'data.json')
 
 type Data = {
-  bookings: StoredBooking[]
-  blockedSlots: StoredBlockedSlot[]
+  bookings: Booking[]
+  blockedSlots: BlockedSlot[]
 }
 
 async function readData(): Promise<Data> {
   try {
-    const json = await fs.readFile(DATA_PATH, 'utf-8')
+    const json = await fs.readFile(PATH, 'utf-8')
     return JSON.parse(json)
   } catch (error) {
     return { bookings: [], blockedSlots: [] }
@@ -19,7 +19,7 @@ async function readData(): Promise<Data> {
 }
 
 async function writeData(data: Data): Promise<void> {
-  await fs.writeFile(DATA_PATH, JSON.stringify(data, null, 2))
+  await fs.writeFile(PATH, JSON.stringify(data, null, 2))
 }
 
 export { readData, writeData }
