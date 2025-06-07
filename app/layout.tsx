@@ -10,7 +10,7 @@ export default function RootLayout({
     <html lang='en'>
       <body>
         <Navbar />
-        {children}
+        <div className='container mx-auto md:px-12 xl:px-40'>{children}</div>
       </body>
     </html>
   )

@@ -1,16 +1,19 @@
 import clsx from 'clsx'
-import type { ButtonHTMLAttributes } from 'react'
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from 'react'
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+type ButtonProps = {
   size?: 'sm' | 'md' | 'lg'
   variant?: 'primary' | 'secondary' | 'outline'
-}
+  as?: 'button' | 'a'
+} & ButtonHTMLAttributes<HTMLButtonElement> &
+  AnchorHTMLAttributes<HTMLAnchorElement>
 
 const Button = ({
   className = '',
   children,
   size = 'md',
   variant = 'primary',
+  as = 'button',
   ...props
 }: ButtonProps) => {
   const baseStles = 'rounded font-semibold shadow transition'
@@ -26,6 +29,23 @@ const Button = ({
     md: 'px-4 py-2 text-base',
     lg: 'px-6 py-3 text-lg',
   }[size]
+  if (as === 'a') {
+    return (
+      <a
+        role='button'
+        className={clsx(
+          'inline-block cursor-pointer no-underline',
+          baseStles,
+          variantClass,
+          sizeClass,
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </a>
+    )
+  }
 
   return (
     <button className={clsx(baseStles, variantClass, sizeClass, className)} {...props}>
