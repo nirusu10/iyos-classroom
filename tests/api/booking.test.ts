@@ -1,4 +1,4 @@
-import { POST } from '@/app/api/booking/route'
+import { GET, POST } from '@/app/api/booking/route'
 import { addMinutes, subMinutes } from 'date-fns'
 import { NextRequest } from 'next/server'
 import { describe, expect, it } from 'vitest'
@@ -114,6 +114,16 @@ describe('Test booking routes', () => {
       expect(res.status).toBe(400)
       const data = await res.json()
       expect(data.message).toMatch('Missing information in request')
+    })
+  })
+
+  describe('GET /api/bookings', () => {
+    it('returns a list of bookings', async () => {
+      const response = await GET()
+      expect(response.status).toBe(200)
+
+      const data = await response.json()
+      expect(Array.isArray(data)).toBe(true)
     })
   })
 })

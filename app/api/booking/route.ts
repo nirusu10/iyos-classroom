@@ -38,3 +38,10 @@ export const POST = async (req: NextRequest) => {
 
   return NextResponse.json(newBooking, { status: 201 })
 }
+
+export const GET = async () => {
+  await connectDB()
+  const bookings = await BookingModel.find().sort({ startTime: 1 })
+
+  return NextResponse.json(bookings, { status: 200 })
+}
