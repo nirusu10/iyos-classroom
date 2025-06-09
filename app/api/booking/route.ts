@@ -1,28 +1,28 @@
 import connectDB from '@/lib/dbConnect'
 import { NextRequest, NextResponse } from 'next/server'
-import { isBefore } from 'date-fns'
 import BookingModel from '@/lib/models/BookingModel'
+import { bookingSchema } from '@/lib/validation/booking'
+import { fromZonedTime } from 'date-fns-tz'
 
 export const POST = async (req: NextRequest) => {
   await connectDB()
 
-  const { studentName, startTime: reqStartTime, endTime: reqEndTime } = await req.json()
+  const body = await req.json()
+  const parsed = bookingSchema.safeParse(body)
 
-  if (!studentName || !reqStartTime || !reqEndTime) {
-    return NextResponse.json({ message: 'Missing information in request' }, { status: 400 })
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
-  const startTimeDate = new Date(reqStartTime)
-  const endTimeDate = new Date(reqEndTime)
+  const { studentName, startTime, endTime, timeZone } = parsed.data
 
-  if (isBefore(startTimeDate, new Date())) {
-    return NextResponse.json({ message: 'Start date cannot be in the past.' }, { status: 409 })
-  }
+  const startTimeUtc = fromZonedTime(startTime, timeZone)
+  const endTimeUtc = fromZonedTime(endTime, timeZone)
 
   const isOverlapping = await BookingModel.findOne({
     status: 'booked',
-    startTime: { $lt: endTimeDate },
-    endTime: { $gt: startTimeDate },
+    startTime: { $lt: endTimeUtc },
+    endTime: { $gt: startTimeUtc },
   })
 
   if (isOverlapping) {
@@ -31,8 +31,8 @@ export const POST = async (req: NextRequest) => {
 
   const newBooking = await BookingModel.create({
     studentName,
-    startTime: startTimeDate,
-    endTime: endTimeDate,
+    startTime: startTimeUtc,
+    endTime: endTimeUtc,
     status: 'booked',
   })
 

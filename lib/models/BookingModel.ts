@@ -1,6 +1,6 @@
-import { model, Schema } from 'mongoose'
+import { model, models, Schema } from 'mongoose'
 
-interface IBooking extends Document {
+interface IBooking {
   _id?: string
   studentName: string
   startTime: Date
@@ -20,6 +20,4 @@ const bookingSchema = new Schema<IBooking>(
   { timestamps: true }
 )
 
-const BookingModel = model<IBooking>('Booking', bookingSchema)
-
-export default BookingModel
+export default models.BookingModel || model<IBooking>('Booking', bookingSchema)

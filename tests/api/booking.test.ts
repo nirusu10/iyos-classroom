@@ -13,6 +13,7 @@ describe('Test booking routes', () => {
         studentName: 'Nils Matic',
         startTime,
         endTime,
+        timeZone: 'Europe/Berlin',
       }
 
       const request = new NextRequest(new URL('http://localhost'), {
@@ -40,12 +41,14 @@ describe('Test booking routes', () => {
         studentName: 'Nils Matic',
         startTime: startTimeFirst,
         endTime: endTimeFirst,
+        timeZone: 'Europe/Berlin',
       }
 
       const secondBooking = {
         studentName: 'Nils Matic',
         startTime: startTimeSecond,
         endTime: endTimeSecond,
+        timeZone: 'Europe/Berlin',
       }
 
       const firstRequest = new NextRequest(new URL('http://localhost'), {
@@ -78,6 +81,7 @@ describe('Test booking routes', () => {
         studentName: 'Nils Matic',
         startTime,
         endTime,
+        timeZone: 'Europe/Berlin',
       }
 
       const request = new NextRequest(new URL('http://localhost'), {
@@ -89,9 +93,10 @@ describe('Test booking routes', () => {
       })
 
       const res = await POST(request)
-      expect(res.status).toBe(409)
+      expect(res.status).toBe(400)
       const data = await res.json()
-      expect(data.message).toMatch('Start date cannot be in the past')
+      expect(data.error).toBeDefined()
+      expect(data.error.fieldErrors.startTime?.[0]).toMatch('Start time must be in the future')
     })
 
     it('returns status 400 when body is incomplete', async () => {
@@ -113,7 +118,10 @@ describe('Test booking routes', () => {
       const res = await POST(request)
       expect(res.status).toBe(400)
       const data = await res.json()
-      expect(data.message).toMatch('Missing information in request')
+
+      expect(data.error).toHaveProperty('fieldErrors')
+      expect(data.error.fieldErrors).toHaveProperty('endTime')
+      expect(data.error.fieldErrors.endTime[0]).toMatch(/required/i)
     })
   })
 
