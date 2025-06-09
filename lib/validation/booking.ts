@@ -3,7 +3,7 @@ import { isFutureDateInZone } from '@/lib/utils/dateValidation'
 
 export const bookingSchema = z
   .object({
-    studentName: z.string().min(1, 'Student name is required'),
+    studentEmail: z.string().email('Valid email is required'),
     startTime: z
       .string()
       .refine((val) => !isNaN(Date.parse(val)), 'startTime must be a valid ISO date string'),

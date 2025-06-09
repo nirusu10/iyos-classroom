@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import BookingModel from '@/lib/models/BookingModel'
 import { bookingSchema } from '@/lib/validation/booking'
 import { fromZonedTime } from 'date-fns-tz'
+import { sendBookingConfirmation } from '@/lib/email/sendBookingConfirmation'
 
 export const POST = async (req: NextRequest) => {
   await connectDB()
@@ -14,7 +15,7 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
-  const { studentName, startTime, endTime, timeZone } = parsed.data
+  const { studentEmail, startTime, endTime, timeZone } = parsed.data
 
   const startTimeUtc = fromZonedTime(startTime, timeZone)
   const endTimeUtc = fromZonedTime(endTime, timeZone)
@@ -30,18 +31,31 @@ export const POST = async (req: NextRequest) => {
   }
 
   const newBooking = await BookingModel.create({
-    studentName,
+    studentEmail,
     startTime: startTimeUtc,
     endTime: endTimeUtc,
     status: 'booked',
   })
 
-  return NextResponse.json(newBooking, { status: 201 })
+  await sendBookingConfirmation({
+    to: studentEmail, // assuming this is the email
+    startTime: newBooking.startTime.toISOString(),
+    endTime: newBooking.endTime.toISOString(),
+  })
+
+  return NextResponse.json(
+    {
+      message: 'Booking confirmed',
+      startTime: newBooking.startTime,
+      endTime: newBooking.endTime,
+    },
+    { status: 201 }
+  )
 }
 
 export const GET = async () => {
   await connectDB()
-  const bookings = await BookingModel.find().sort({ startTime: 1 })
+  const bookings = await BookingModel.find().sort({ startTime: 1 }).lean()
 
   return NextResponse.json(bookings, { status: 200 })
 }

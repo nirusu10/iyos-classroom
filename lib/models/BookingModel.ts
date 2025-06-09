@@ -2,7 +2,7 @@ import { model, models, Schema } from 'mongoose'
 
 interface IBooking {
   _id?: string
-  studentName: string
+  studentEmail: string
   startTime: Date
   endTime: Date
   status: 'booked' | 'cancelled'
@@ -12,7 +12,7 @@ interface IBooking {
 
 const bookingSchema = new Schema<IBooking>(
   {
-    studentName: { type: String, required: true },
+    studentEmail: { type: String, required: true },
     startTime: { type: Date, required: true },
     endTime: { type: Date, required: true },
     status: { type: String, default: 'booked' },
@@ -20,4 +20,4 @@ const bookingSchema = new Schema<IBooking>(
   { timestamps: true }
 )
 
-export default models.BookingModel || model<IBooking>('Booking', bookingSchema)
+export default models.Booking || model<IBooking>('Booking', bookingSchema)

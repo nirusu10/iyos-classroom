@@ -10,7 +10,7 @@ describe('Test booking routes', () => {
       const endTime = addMinutes(startTime, 50)
 
       const newBooking = {
-        studentName: 'Nils Matic',
+        studentEmail: 'test@example.com',
         startTime,
         endTime,
         timeZone: 'Europe/Berlin',
@@ -27,7 +27,7 @@ describe('Test booking routes', () => {
 
       const data = await res.json()
       expect(data).toHaveProperty('startTime')
-      expect(data.studentName).toMatch('Nils Matic')
+      expect(data.studentEmail).toMatch('test@example.com')
     })
 
     it('returns status 409 when trying to book a booking that overlaps', async () => {
@@ -38,14 +38,14 @@ describe('Test booking routes', () => {
       const endTimeSecond = addMinutes(startTimeSecond, 50)
 
       const firstBooking = {
-        studentName: 'Nils Matic',
+        studentEmail: 'test@example.com',
         startTime: startTimeFirst,
         endTime: endTimeFirst,
         timeZone: 'Europe/Berlin',
       }
 
       const secondBooking = {
-        studentName: 'Nils Matic',
+        studentEmail: 'test@example.com',
         startTime: startTimeSecond,
         endTime: endTimeSecond,
         timeZone: 'Europe/Berlin',
@@ -78,7 +78,7 @@ describe('Test booking routes', () => {
       const endTime = addMinutes(startTime, 50)
 
       const newBooking = {
-        studentName: 'Nils Matic',
+        studentEmail: 'test@example.com',
         startTime,
         endTime,
         timeZone: 'Europe/Berlin',
@@ -103,7 +103,7 @@ describe('Test booking routes', () => {
       const startTime = new Date()
 
       const newBooking = {
-        studentName: 'Nils Matic',
+        studentEmail: 'test@example.com',
         startTime,
       }
 

@@ -14,63 +14,62 @@ const querySchema = z.object({
 })
 
 export const GET = async (req: NextRequest) => {
-  const { searchParams } = new URL(req.url)
-  const date = searchParams.get('date')
-  const timeZone = searchParams.get('timeZone') || 'UTC'
+  try {
+    const { searchParams } = new URL(req.url)
+    const date = searchParams.get('date')
+    const timeZone = searchParams.get('timeZone') || 'UTC'
 
-  const parseResult = querySchema.safeParse({ date, timeZone })
-
-  if (!parseResult.success) {
-    return NextResponse.json({ error: parseResult.error.format() }, { status: 400 })
-  }
-
-  const { date: dateParam } = parseResult.data
-
-  await connectDB()
-
-  const baseDate = parseISO(dateParam)
-  const zonedDate = toZonedTime(baseDate, timeZone)
-  const dayOfWeek = zonedDate.getDay()
-
-  const availability = await AvailabilityModel.findOne({ dayOfWeek })
-  if (!availability) {
-    return NextResponse.json({ slots: [] }, { status: 200 })
-  }
-
-  const [startH, startM] = availability.startHour.split(':').map(Number)
-  const [endH, endM] = availability.endHour.split(':').map(Number)
-
-  // Construct start and end Date objects in the user’s time zone
-  const startLocal = setMinutes(
-    setHours(setSeconds(toZonedTime(baseDate, timeZone), 0), startH),
-    startM
-  )
-  const endLocal = setMinutes(setHours(setSeconds(toZonedTime(baseDate, timeZone), 0), endH), endM)
-
-  const slots = []
-  let current = startLocal
-
-  while (isBefore(addMinutes(current, 50), endLocal)) {
-    const slotEnd = addMinutes(current, 50)
-
-    const startUTC = fromZonedTime(current, timeZone)
-    const endUTC = fromZonedTime(slotEnd, timeZone)
-
-    const overlapping = await BookingModel.findOne({
-      startTime: { $lt: endUTC },
-      endTime: { $gt: startUTC },
-      status: 'booked',
-    })
-
-    if (!overlapping) {
-      slots.push({
-        start: startUTC.toISOString(),
-        end: endUTC.toISOString(),
-      })
+    const parseResult = querySchema.safeParse({ date, timeZone })
+    if (!parseResult.success) {
+      return NextResponse.json({ error: parseResult.error.format() }, { status: 400 })
     }
 
-    current = addMinutes(current, 10) // move forward by 10 mins
-  }
+    const { date: dateParam } = parseResult.data
 
-  return NextResponse.json({ slots }, { status: 200 })
+    await connectDB()
+
+    const baseDate = parseISO(dateParam)
+    const berlinDate = toZonedTime(baseDate, 'Europe/Berlin')
+    const dayOfWeek = berlinDate.getDay()
+
+    const availability = await AvailabilityModel.findOne({ dayOfWeek })
+    if (!availability) {
+      return NextResponse.json({ slots: [] }, { status: 200 })
+    }
+
+    const [startH, startM] = availability.startHour.split(':').map(Number)
+    const [endH, endM] = availability.endHour.split(':').map(Number)
+
+    const startLocal = setMinutes(setHours(setSeconds(berlinDate, 0), startH), startM)
+    const endLocal = setMinutes(setHours(setSeconds(berlinDate, 0), endH), endM)
+
+    const slots = []
+    let current = startLocal
+
+    while (isBefore(addMinutes(current, 50), endLocal)) {
+      const slotEnd = addMinutes(current, 50)
+      const startUTC = fromZonedTime(current, 'Europe/Berlin')
+      const endUTC = fromZonedTime(slotEnd, 'Europe/Berlin')
+
+      const overlapping = await BookingModel.findOne({
+        startTime: { $lt: endUTC },
+        endTime: { $gt: startUTC },
+        status: 'booked',
+      })
+
+      if (!overlapping) {
+        slots.push({
+          start: startUTC.toISOString(),
+          end: endUTC.toISOString(),
+        })
+      }
+
+      current = addMinutes(current, 10)
+    }
+
+    return NextResponse.json({ slots }, { status: 200 })
+  } catch (err) {
+    console.error('❌ API Error in /api/slots:', err)
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 })
+  }
 }
