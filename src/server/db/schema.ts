@@ -14,16 +14,32 @@ export const createTable = sqliteTableCreator(
   (name) => `iyos-classroom_${name}`,
 );
 
-export const posts = createTable(
-  "post",
+export const bookings = createTable(
+  "booking",
   (d) => ({
     id: d.integer({ mode: "number" }).primaryKey({ autoIncrement: true }),
-    name: d.text({ length: 256 }),
+    studentEmail: d.text({ length: 256 }).notNull(),
+    startTime: d.text({ length: 256 }).notNull(),
+    endTime: d.text({ length: 256 }).notNull(),
+    timeZone: d.text().notNull(),
     createdAt: d
       .integer({ mode: "timestamp" })
       .default(sql`(unixepoch())`)
       .notNull(),
     updatedAt: d.integer({ mode: "timestamp" }).$onUpdate(() => new Date()),
   }),
-  (t) => [index("name_idx").on(t.name)],
+  (t) => [index("email_idx").on(t.studentEmail)],
 );
+
+export const availability = createTable("availability", (d) => ({
+  id: d.integer({ mode: "number" }).primaryKey({ autoIncrement: true }),
+  weekday: d.integer().notNull(),
+  startTime: d.text({ length: 256 }).notNull(),
+  endTime: d.text({ length: 256 }).notNull(),
+  timeZone: d.text().notNull(),
+  createdAt: d
+    .integer({ mode: "timestamp" })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  updatedAt: d.integer({ mode: "timestamp" }).$onUpdate(() => new Date()),
+}));

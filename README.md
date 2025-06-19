@@ -29,18 +29,18 @@ Deployed early and continuously using [Vercel](https://vercel.com/).
 ### 1. 📄 Pages & Routing
 
 - [x] `/` – Landing page with teacher intro & CTA to book
-- [ ] `/book` – Booking page (calendar, time slots, email input)
-- [ ] `/admin` – Teacher dashboard to manage availability & see bookings
+- [x] `/book` – Booking page (calendar, time slots, email input)
+- [x] `/admin` – Teacher dashboard to manage availability & see bookings
 - [ ] `/materials` – Static or dynamic materials page
-- [ ] API Route `/api/booking` – Accepts validated booking requests
+- [x] API Route `/api/booking` – Accepts validated booking requests
 
 ### 2. 🔄 Booking Flow (no auth yet)
 
-- [ ] Design Zod schemas for booking validation
-- [ ] Add student email + start/end time + timezone to booking form
-- [ ] Handle time zone conversion with `date-fns-tz`
-- [ ] Allow booking from available teacher time slots
-- [ ] Store validated booking in SQLite via Drizzle
+- [x] Design Zod schemas for booking validation
+- [x] Add student email + start/end time + timezone to booking form
+- [x] Handle time zone conversion with `date-fns-tz`
+- [x] Allow booking from available teacher time slots
+- [x] Store validated booking in SQLite via Drizzle
 - [ ] Show confirmation page or toast
 
 ### 3. 🗓️ Teacher Availability
