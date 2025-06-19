@@ -1,68 +1,85 @@
 # iyos-classroom
 
-**A Japanese teacher booking site** – simple, time-zone aware, and built with love.  
-Students can book lessons, view materials, and optionally register. Teachers can manage availability and bookings via the admin panel.
+A booking and teaching materials platform built for a Japanese teacher using the T3 stack (Next.js, Tailwind CSS, TypeScript, Drizzle ORM).
+
+## 🌐 Live Deployment
+
+Deployed early and continuously using [Vercel](https://vercel.com/).
+
+## 🧰 Tech Stack
+
+- [Next.js App Router](https://nextjs.org/docs/app)
+- TypeScript
+- Tailwind CSS
+- Drizzle ORM (with SQLite/LibSQL)
+- ESLint & Prettier
+- Clerk (planned)
+- Resend for email (planned)
+- `date-fns` & `date-fns-tz` for time zone handling
 
 ---
 
-## 🛠 Tech Stack
+## ✅ Roadmap & Checklist
 
-- **Framework:** Next.js (App Router)
-- **Styling:** Tailwind CSS
-- **ORM:** Drizzle ORM
-- **Database:** SQLite (LibSQL)
-- **Language:** TypeScript
-- **Email:** Resend (for confirmation emails)
-- **Time zones:** date-fns + date-fns-tz
-- **Authentication:** Clerk (planned)
+### 🔁 Initial Setup
+
+- [x] Scaffold project using T3 stack
+- [x] Deploy early to Vercel
+
+### 1. 📄 Pages & Routing
+
+- [ ] `/` – Landing page with teacher intro & CTA to book
+- [ ] `/book` – Booking page (calendar, time slots, email input)
+- [ ] `/admin` – Teacher dashboard to manage availability & see bookings
+- [ ] `/materials` – Static or dynamic materials page
+- [ ] API Route `/api/booking` – Accepts validated booking requests
+
+### 2. 🔄 Booking Flow (no auth yet)
+
+- [ ] Design Zod schemas for booking validation
+- [ ] Add student email + start/end time + timezone to booking form
+- [ ] Handle time zone conversion with `date-fns-tz`
+- [ ] Allow booking from available teacher time slots
+- [ ] Store validated booking in SQLite via Drizzle
+- [ ] Show confirmation page or toast
+
+### 3. 🗓️ Teacher Availability
+
+- [ ] Build a form to input weekly availability (per weekday)
+- [ ] Repeat weekly logic (e.g. every Monday at 14:00)
+- [ ] Convert to UTC on backend and save to DB
+- [ ] Generate time slots (10-min spaced, 50-min sessions)
+
+### 4. 📬 Confirmation Email (Resend)
+
+- [ ] Set up Resend account
+- [ ] Send email to student after booking with date/time
+- [ ] Send email to teacher with student info
+
+### 5. 👤 Authentication (Later Phase)
+
+- [ ] Integrate Clerk (email-based for teacher + optional for students)
+- [ ] Make admin page editable only when logged in as teacher
+
+### 6. 📚 Materials Page
+
+- [ ] Simple static or CMS-based page to upload/share resources
 
 ---
 
-## 🚀 Setup
+## 🧪 Dev Scripts
 
 ```bash
-pnpm install
-pnpm dev
+pnpm dev         # Start dev server
+pnpm lint        # Lint code
+pnpm format      # Format code
+pnpm build       # Build for production
 ```
 
-- Environment variables will be added as needed (e.g. for Resend, Clerk, DB URL)
-- First milestone: deploy to **Vercel** early!
-
 ---
 
-## ✅ Milestone Checklist
+## 🧠 Notes
 
-- [x] Project initialized with T3 stack + Drizzle + App Router
-- [ ] Deploy first version to Vercel
-- [ ] Create weekly teacher availability model (Drizzle)
-- [ ] Add time zone conversion logic (student & teacher sides)
-- [ ] Booking page with calendar and 10-minute slots
-- [ ] Zod validation for bookings (start, end, email, time zone)
-- [ ] Send booking confirmation emails via Resend
-- [ ] Integrate Clerk (only when admin features require protection)
-- [ ] Admin dashboard for teacher (view & edit availability, bookings)
-- [ ] Materials page with public resources (e.g. PDFs, videos)
-- [ ] (Optional/future) Blog section for teaching-related posts
-
----
-
-## ✨ Planned Pages
-
-- `/` – Landing page
-- `/book` – Booking page
-- `/admin` – Admin dashboard (teacher only)
-- `/materials` – Materials for students
-- `/api/booking` – Handle booking creation and confirmation
-
----
-
-## 📦 Deployment
-
-Deployed via [Vercel](https://vercel.com). Push to `main` to trigger redeploy.  
-Deploy early, test often!
-
----
-
-## 📄 License
-
-MIT License. Built for personal use.
+- Prioritize deploying early and often.
+- Keep user flow smooth: no hard blocks, just UX nudges.
+- Focus first on working booking loop → admin tools → polish.
