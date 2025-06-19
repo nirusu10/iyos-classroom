@@ -28,7 +28,7 @@ Deployed early and continuously using [Vercel](https://vercel.com/).
 
 ### 1. 📄 Pages & Routing
 
-- [ ] `/` – Landing page with teacher intro & CTA to book
+- [x] `/` – Landing page with teacher intro & CTA to book
 - [ ] `/book` – Booking page (calendar, time slots, email input)
 - [ ] `/admin` – Teacher dashboard to manage availability & see bookings
 - [ ] `/materials` – Static or dynamic materials page
