@@ -9,7 +9,7 @@ export default function HomePage() {
       <section
         id="hero"
         aria-label="Hero: Introduction to Iyo's Classroom"
-        className="shadowsm:px-10 flex flex-col items-center gap-10 rounded-xl bg-gray-800 px-4 py-10 md:flex-row md:gap-16 md:py-14"
+        className="flex flex-col items-center gap-10 rounded-xl bg-gray-800 px-4 py-10 sm:px-10 md:flex-row md:justify-evenly md:gap-16 md:py-14"
       >
         <div className="flex flex-col items-center text-center md:items-start md:text-left">
           <h1 className="text-3xl leading-tight font-bold drop-shadow-2xl md:text-5xl">
@@ -42,10 +42,10 @@ export default function HomePage() {
         </p>
         <ul className="mt-8 flex flex-wrap justify-center gap-10">
           <FeatureItem emoji="🇯🇵" text="Native Japanese speaker" />
-          <FeatureItem emoji="🇯🇵" text="JLPT test preparation" />
-          <FeatureItem emoji="🇯🇵" text="Flexible schedule" />
-          <FeatureItem emoji="🇯🇵" text="Beginner to advanced" />
-          <FeatureItem emoji="🇯🇵" text="Personalized lessons" />
+          <FeatureItem emoji="🎓" text="JLPT test preparation" />
+          <FeatureItem emoji="📅" text="Flexible schedule" />
+          <FeatureItem emoji="🗣️" text="Beginner to advanced" />
+          <FeatureItem emoji="✨" text="Personalized lessons" />
         </ul>
       </section>
       {/* Testimonials section */}
