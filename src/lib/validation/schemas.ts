@@ -13,7 +13,7 @@ export const availabilitySchema = z
     endTimeMinutes: z.number().min(1).max(1440),
   })
   .refine((data) => data.startTimeMinutes < data.endTimeMinutes, {
-    message: "Start time must be before end time",
+    error: "Start time must be before end time",
   });
 
 export const availabilityExceptionSchema = z.object({
@@ -22,21 +22,25 @@ export const availabilityExceptionSchema = z.object({
   isAvailable: z.boolean(),
 });
 
+export const availableSlotsSchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), // 'YYYY-MM-DD'
+  timeZone: z.string(), // TZ like 'Europe/Berlin'
+});
+
 export const bookingSchema = z.object({
   teacherId: z.number(),
   studentId: z.number(),
   startTime: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: "Start time must be a valid ISO string",
+    error: "Start time must be a valid ISO string",
   }),
   endTime: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: "End time must be a valid ISO string",
+    error: "End time must be a valid ISO string",
   }),
   timeZone: z.string().min(1, "Time zone is required"),
 });
 
-export type StudentInput = z.infer<typeof studentSchema>;
-export type BookingInput = z.infer<typeof bookingSchema>;
-export type AvailabilityInput = z.infer<typeof availabilitySchema>;
-export type AvailabilityExceptionInput = z.infer<
-  typeof availabilityExceptionSchema
->;
+export type Student = z.infer<typeof studentSchema>;
+export type Booking = z.infer<typeof bookingSchema>;
+export type Availability = z.infer<typeof availabilitySchema>;
+export type AvailabilityException = z.infer<typeof availabilityExceptionSchema>;
+export type AvailableSlots = z.infer<typeof availableSlotsSchema>;

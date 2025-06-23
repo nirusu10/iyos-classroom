@@ -1,0 +1,76 @@
+import { TZDate } from "@date-fns/tz";
+import type {
+  AvailabilityException,
+  Availability,
+  Booking,
+} from "../validation/schemas";
+import { addMinutes, formatISO } from "date-fns";
+
+export function computeAvailableSlots({
+  date,
+  timeZone,
+  availabilities,
+  exceptions,
+  bookings,
+  lessonLength = 50,
+  interval = 10,
+}: {
+  date: string; // YYYY-MM-DD
+  timeZone: string;
+  availabilities: Availability[];
+  exceptions: AvailabilityException[];
+  bookings: Booking[];
+  lessonLength?: number;
+  interval?: number;
+}) {
+  const day = new TZDate(`${date}T00:00:00`, timeZone);
+  const weekday = day.getDay();
+
+  // Blocked entirely?
+  const dayException = exceptions.find((e) => e.date === date);
+  if (dayException && !dayException.isAvailable) return [];
+
+  // Build slots from recurring availability
+  const matched = availabilities.filter((a) => a.weekday === weekday);
+
+  const slots: string[] = [];
+
+  for (const block of matched) {
+    const blockStart = new TZDate(
+      day.getFullYear(),
+      day.getMonth(),
+      day.getDate(),
+      Math.floor(block.startTimeMinutes / 60), // hours
+      block.startTimeMinutes % 60, // minutes
+      timeZone,
+    );
+
+    const blockEnd = new TZDate(
+      day.getFullYear(),
+      day.getMonth(),
+      day.getDate(),
+      Math.floor(block.endTimeMinutes / 60),
+      block.endTimeMinutes % 60,
+      timeZone,
+    );
+
+    for (
+      let slot = blockStart;
+      addMinutes(slot, lessonLength) <= blockEnd;
+      slot = addMinutes(slot, interval)
+    ) {
+      const slotEnd = addMinutes(slot, lessonLength);
+      const overlaps = bookings.some(
+        (booking) =>
+          new Date(booking.startTime) < slotEnd &&
+          new Date(booking.endTime) > slot,
+      );
+
+      if (!overlaps) {
+        slots.push(formatISO(slot));
+      }
+    }
+  }
+
+  return slots;
+}
