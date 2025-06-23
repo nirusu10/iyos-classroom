@@ -17,17 +17,17 @@ A Japanese teacher booking platform built with the T3 Stack.
 
 ### 1. 🏗️ Project Structure
 
-- [ ] Set up project folders (`app`, `components`, `lib`, `db`, `styles`)
-- [ ] Configure `~/` import alias
+- [x] Set up project folders (`app`, `components`, `lib`, `db`, `styles`)
+- [x] Configure `~/` import alias
 
 ### 2. 🧠 Data Models (Drizzle)
 
-- [ ] Create schema: `Teacher`, `Availability`, `Booking`, `Student`
-- [ ] Availability:
+- [x] Create schema: `Teacher`, `Availability`, `Booking`, `Student`
+- [x] Availability:
   - Weekly recurring (e.g. "Mondays 14:00–18:00")
   - Overridable on specific dates
   - Valid up to 4 weeks in advance
-- [ ] Booking:
+- [x] Booking:
   - 50-minute lessons
   - Start times in 10-minute intervals
   - Prevent double-booking (overlap checking logic)
