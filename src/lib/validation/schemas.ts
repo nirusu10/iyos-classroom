@@ -1,0 +1,42 @@
+import { z } from "zod/v4";
+
+export const studentSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.email("Valid email required"),
+});
+
+export const availabilitySchema = z
+  .object({
+    teacherId: z.number(),
+    weekday: z.number().min(0).max(6),
+    startTimeMinutes: z.number().min(0).max(1439),
+    endTimeMinutes: z.number().min(1).max(1440),
+  })
+  .refine((data) => data.startTimeMinutes < data.endTimeMinutes, {
+    message: "Start time must be before end time",
+  });
+
+export const availabilityExceptionSchema = z.object({
+  teacherId: z.number(),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be YYYY-MM-DD"),
+  isAvailable: z.boolean(),
+});
+
+export const bookingSchema = z.object({
+  teacherId: z.number(),
+  studentId: z.number(),
+  startTime: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: "Start time must be a valid ISO string",
+  }),
+  endTime: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: "End time must be a valid ISO string",
+  }),
+  timeZone: z.string().min(1, "Time zone is required"),
+});
+
+export type StudentInput = z.infer<typeof studentSchema>;
+export type BookingInput = z.infer<typeof bookingSchema>;
+export type AvailabilityInput = z.infer<typeof availabilitySchema>;
+export type AvailabilityExceptionInput = z.infer<
+  typeof availabilityExceptionSchema
+>;

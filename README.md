@@ -35,9 +35,9 @@ A Japanese teacher booking platform built with the T3 Stack.
 
 ### 3. 📜 Zod Validation
 
-- [ ] Booking request validation
-- [ ] Availability slot validation
-- [ ] Shared schemas for both frontend/backend in `lib/validation/`
+- [x] Booking request validation
+- [x] Availability slot validation
+- [x] Shared schemas for both frontend/backend in `lib/validation/`
 
 ### 4. 🖼️ Public Booking UI
 
