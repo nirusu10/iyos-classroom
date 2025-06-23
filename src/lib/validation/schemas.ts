@@ -16,6 +16,8 @@ export const availabilitySchema = z
     error: "Start time must be before end time",
   });
 
+export const availabilitiesSchema = z.array(availabilitySchema);
+
 export const availabilityExceptionSchema = z.object({
   teacherId: z.number(),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be YYYY-MM-DD"),

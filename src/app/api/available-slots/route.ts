@@ -16,7 +16,6 @@ const querySchema = z.object({
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const body = await request.json();
 
   const parsed = querySchema.safeParse({
     date: url.searchParams.get("date"),
