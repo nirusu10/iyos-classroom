@@ -1,29 +1,83 @@
-# Create T3 App
+# iyos-classroom
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+A Japanese teacher booking platform built with the T3 Stack.
 
-## What's next? How do I make an app with this?
+## 🧱 Tech Stack
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- **Next.js App Router** (TypeScript)
+- **Tailwind CSS**
+- **Drizzle ORM** with SQLite (LibSQL)
+- **Zod** for validation
+- **Resend** for email notifications
+- **ESLint + Prettier**
+- **Authentication**: None yet (Clerk planned)
+- **CMS**: For lesson materials and blog posts (planned)
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## 🚧 Development Checkpoints
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+### 1. 🏗️ Project Structure
 
-## Learn More
+- [ ] Set up project folders (`app`, `components`, `lib`, `db`, `styles`)
+- [ ] Configure `~/` import alias
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+### 2. 🧠 Data Models (Drizzle)
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+- [ ] Create schema: `Teacher`, `Availability`, `Booking`, `Student`
+- [ ] Availability:
+  - Weekly recurring (e.g. "Mondays 14:00–18:00")
+  - Overridable on specific dates
+  - Valid up to 4 weeks in advance
+- [ ] Booking:
+  - 50-minute lessons
+  - Start times in 10-minute intervals
+  - Prevent double-booking (overlap checking logic)
+- [ ] Run and test migrations
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+### 3. 📜 Zod Validation
 
-## How do I deploy this?
+- [ ] Booking request validation
+- [ ] Availability slot validation
+- [ ] Shared schemas for both frontend/backend in `lib/validation/`
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+### 4. 🖼️ Public Booking UI
+
+- [ ] Calendar view for selecting a date
+- [ ] Show available time slots per day
+- [ ] Booking form with email input
+- [ ] Booking confirmation screen
+
+### 5. 🧑‍🏫 Teacher Admin Panel
+
+- [ ] Login system (planned via Clerk)
+- [ ] Manage recurring weekly availability
+- [ ] Override or block specific days
+- [ ] View upcoming bookings
+
+### 6. ⏰ Time Zone Handling
+
+- [ ] Store times in UTC
+- [ ] Use `date-fns-tz` to convert times on frontend
+- [ ] Detect user’s local time zone automatically
+
+### 7. 📩 Email Notifications
+
+- [ ] Send confirmation email to student (via Resend)
+- [ ] Send alert email to teacher
+- [ ] Optionally include student name/message
+
+### 8. 🛡️ Authentication (Planned)
+
+- [ ] Add Clerk for teacher login
+- [ ] Evaluate optional student registration (low-friction)
+
+### 9. 🧾 CMS & Content (Planned)
+
+- [ ] Add support for lesson materials in admin dashboard
+- [ ] Display materials on a public-facing "Materials" page
+- [ ] Add blog feature for updates and posts
+
+### 10. 🌐 Deployment
+
+- [ ] Deploy to Vercel
+- [ ] Connect environment variables
+- [ ] Ensure persistent database (via LibSQL or external PostgreSQL later)
