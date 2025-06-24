@@ -1,7 +1,6 @@
 import { and, eq } from "drizzle-orm";
 import { z } from "zod/v4";
 import { computeAvailableSlots } from "~/lib/time/computeSlots";
-import { availableSlotsSchema } from "~/lib/validation/schemas";
 import { db } from "~/server/db";
 import {
   availabilities,

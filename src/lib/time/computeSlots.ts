@@ -63,7 +63,7 @@ export function computeAvailableSlots({
       );
 
       if (!overlaps) {
-        slots.push(formatISO(slot));
+        slots.push(slot.toISOString());
       }
     }
   }

@@ -1,17 +1,1 @@
-POST http://localhost:3000/api/availabilities
-Content-Type: application/json
-
-[
-  {
-    "teacherId": 1,
-    "weekday": 2,
-    "startTimeMinutes": 540,
-    "endTimeMinutes": 660
-  },
-  {
-    "teacherId": 1,
-    "weekday": 4,
-    "startTimeMinutes": 600,
-    "endTimeMinutes": 720
-  }
-]
+GET http://localhost:3000/api/available-slots?date=2025-07-22&timeZone=Europe%2FBerlin
