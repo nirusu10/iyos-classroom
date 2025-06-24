@@ -41,8 +41,10 @@ export const bookingSchema = z.object({
   timeZone: z.string().min(1, "Time zone is required"),
 });
 
-export type Student = z.infer<typeof studentSchema>;
-export type Booking = z.infer<typeof bookingSchema>;
-export type Availability = z.infer<typeof availabilitySchema>;
-export type AvailabilityException = z.infer<typeof availabilityExceptionSchema>;
-export type AvailableSlots = z.infer<typeof availableSlotsSchema>;
+export type StudentInput = z.infer<typeof studentSchema>;
+export type BookingInput = z.infer<typeof bookingSchema>;
+export type AvailabilityInput = z.infer<typeof availabilitySchema>;
+export type AvailabilityExceptionInput = z.infer<
+  typeof availabilityExceptionSchema
+>;
+export type AvailableSlotsInput = z.infer<typeof availableSlotsSchema>;
