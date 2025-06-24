@@ -1,11 +1,10 @@
 import { sql } from "drizzle-orm";
-import { success } from "zod/v4";
 import { availabilitiesSchema } from "~/lib/validation/schemas";
 import { db } from "~/server/db";
 import { availabilities } from "~/server/db/schema";
 
 export async function POST(request: Request) {
-  const body = await request.json();
+  const body: unknown = await request.json();
 
   const result = availabilitiesSchema.safeParse(body);
 

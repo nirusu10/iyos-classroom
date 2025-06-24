@@ -9,7 +9,7 @@ export default function HomePage() {
       <section className="flex flex-col items-center justify-evenly gap-8 rounded-xl px-8 py-10 shadow-md md:flex-row dark:bg-gray-900">
         <div className="flex flex-col items-center text-center text-balance md:items-start md:text-left">
           <h1 className="text-3xl leading-tight font-extrabold text-blue-700 drop-shadow md:text-4xl dark:text-white">
-            Welcome to Iyo's Classroom
+            Welcome to Iyo&apos;s Classroom
           </h1>
           <p className="md:tex-xl mt-4 max-w-xl text-lg text-gray-700 dark:text-gray-100">
             Unlock your Japanese fluency with personalized, friendly lessons
@@ -32,9 +32,9 @@ export default function HomePage() {
           Meet Iyo!
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-center text-lg text-gray-700 md:text-left md:text-xl dark:text-gray-100">
-          I'm a (soon to be) certified Japanese teacher with over 5 years of
-          teaching experience, helping students all over the world achieve their
-          language goals.
+          I&apos;m a (soon to be) certified Japanese teacher with over 5 years
+          of teaching experience, helping students all over the world achieve
+          their language goals.
         </p>
         <ul className="mt-8 flex flex-wrap justify-center gap-8 dark:text-white">
           <FeatureItem emoji="🇯🇵" text="Native Japanese speaker" />

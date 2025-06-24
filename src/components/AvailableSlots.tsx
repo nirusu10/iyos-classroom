@@ -17,7 +17,7 @@ export default function AvailableSlots({ date, onSelectSlot }: Props) {
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   useEffect(() => {
-    const fetchSlots = async () => {
+    void (async () => {
       setLoading(true);
       setError(null);
       setSlots([]);
@@ -27,20 +27,25 @@ export default function AvailableSlots({ date, onSelectSlot }: Props) {
           `/api/available-slots?date=${date}&timeZone=${encodeURIComponent(timeZone)}`,
         );
 
-        const data = await response.json();
+        const raw: unknown = await response.json();
 
-        if (!response.ok)
-          throw new Error(data.error || "Failed to fetch slots");
+        const data = raw as { slots?: string[]; error?: string };
 
-        setSlots(data.slots || []);
-      } catch (error: any) {
-        setError(error.message || "Unknown error");
+        if (!response.ok) {
+          throw new Error(data.error ?? "Failed to fetch slots");
+        }
+
+        setSlots(data.slots ?? []);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message ?? "Unknown error");
+        } else {
+          setError("Unknown error");
+        }
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchSlots();
+    })();
   }, [date, timeZone]);
 
   const handleSelect = (slot: string) => {

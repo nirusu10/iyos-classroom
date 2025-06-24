@@ -1,5 +1,5 @@
 import { TZDate } from "@date-fns/tz";
-import { addMinutes, formatISO } from "date-fns";
+import { addMinutes } from "date-fns";
 import type { Availability, AvailabilityException, Booking } from "../types";
 
 export function computeAvailableSlots({
