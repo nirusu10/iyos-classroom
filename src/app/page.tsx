@@ -72,6 +72,19 @@ export default function HomePage() {
           Book a Lesson
         </Link>
       </section>
+      {/* Inspirational Quote Section */}
+      <section className="flex flex-col items-center py-8">
+        <p className="text-2xl font-light text-blue-600 dark:text-blue-200">
+          「七転び八起き」
+        </p>
+        <p className="mt-1 text-gray-500 italic dark:text-gray-300">
+          “Fall seven times, stand up eight.”
+        </p>
+        <p className="mt-4 max-w-md text-center text-base text-gray-600 dark:text-gray-400">
+          Every studen&apos;s path is unique. Let&apos;s make yours a success
+          together!
+        </p>
+      </section>
     </main>
   );
 }
