@@ -81,7 +81,7 @@ export default function HomePage() {
           “Fall seven times, stand up eight.”
         </p>
         <p className="mt-4 max-w-md text-center text-base text-gray-600 dark:text-gray-400">
-          Every studen&apos;s path is unique. Let&apos;s make yours a success
+          Every student&apos;s path is unique. Let&apos;s make yours a success
           together!
         </p>
       </section>
