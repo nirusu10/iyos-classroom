@@ -1,11 +1,12 @@
 import Link from "next/link";
 import FeatureItem from "~/components/FeatureItem";
+import TestimonialCard from "~/components/TestimonialCard";
 
 export default function HomePage() {
   return (
     <main className="container">
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-evenly gap-8 rounded-xl px-8 py-10 shadow-md md:flex-row dark:bg-gray-800">
+      <section className="flex flex-col items-center justify-evenly gap-8 rounded-xl px-8 py-10 shadow-md md:flex-row dark:bg-gray-900">
         <div className="flex flex-col items-center text-center text-balance md:items-start md:text-left">
           <h1 className="text-3xl leading-tight font-extrabold text-blue-700 drop-shadow md:text-4xl dark:text-white">
             Welcome to Iyo's Classroom
@@ -41,6 +42,22 @@ export default function HomePage() {
           <FeatureItem emoji="📅" text="Flexible schedule" />
           <FeatureItem emoji="🗣️" text="Beginner to Advanced" />
           <FeatureItem emoji="✨" text="Personalized lessons" />
+        </ul>
+      </section>
+      {/* Testimonial Section */}
+      <section className="mt-4 rounded-xl bg-white px-6 py-10 md:mt-8 dark:bg-gray-900">
+        <h2 className="text-center text-2xl font-bold text-blue-700 md:text-3xl dark:text-white">
+          What students say
+        </h2>
+        <ul className="mt-4 flex flex-col gap-8 md:flex-row md:gap-16">
+          <TestimonialCard
+            text="Iyo-sensei makes learning Japanese fun and easy to understand. My confidence in speaking has grown so much!"
+            name="Alex, U.S.A."
+          />
+          <TestimonialCard
+            text="Friendly, patient, and really know how to make grammer easy! Iyo always makes sure that you feel comfortable in her classes."
+            name="Maria, Spain"
+          />
         </ul>
       </section>
     </main>
