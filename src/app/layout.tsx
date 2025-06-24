@@ -5,8 +5,9 @@ import { Geist } from "next/font/google";
 import Navbar from "~/components/layout/Navbar/Navbar";
 
 export const metadata: Metadata = {
-  title: "Iyo's Classroom",
-  description: "Your personal Japanese classroom",
+  title: "Iyo's Classroom | Book Lessons Online",
+  description:
+    "Learn Japanese online with Iyo Sensei. Personalized lessons for all levels, flexible scheduling, and native fluency guidance.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
