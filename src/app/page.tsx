@@ -45,7 +45,7 @@ export default function HomePage() {
         </ul>
       </section>
       {/* Testimonial Section */}
-      <section className="mt-4 rounded-xl bg-white px-6 py-10 md:mt-8 dark:bg-gray-900">
+      <section className="mt-4 rounded-xl bg-white px-6 py-10 shadow md:mt-8 dark:bg-gray-900">
         <h2 className="text-center text-2xl font-bold text-blue-700 md:text-3xl dark:text-white">
           What students say
         </h2>
@@ -59,6 +59,18 @@ export default function HomePage() {
             name="Maria, Spain"
           />
         </ul>
+      </section>
+      {/* CTA Section */}
+      <section className="mt-4 flex flex-col items-center rounded-xl bg-blue-50 px-10 py-20 shadow md:mt-8 dark:bg-gray-800">
+        <h2 className="text-2xl font-bold text-blue-700 drop-shadow md:text-3xl dark:text-white">
+          Ready to start Your Japanese journey?
+        </h2>
+        <Link
+          href="/book"
+          className="mt-6 inline-block w-full cursor-pointer rounded bg-blue-700 px-8 py-4 text-center font-semibold text-white transition hover:bg-blue-600 md:w-auto dark:bg-blue-300 dark:text-black dark:hover:bg-blue-400"
+        >
+          Book a Lesson
+        </Link>
       </section>
     </main>
   );
