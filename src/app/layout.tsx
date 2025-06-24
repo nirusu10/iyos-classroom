@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
+import Navbar from "~/components/layout/Navbar/Navbar";
 
 export const metadata: Metadata = {
   title: "Iyo's Classroom",
@@ -19,7 +20,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${geist.variable}`}>
-      <body className="dark:bg-black">{children}</body>
+      <body className="dark:bg-black">
+        <Navbar />
+        {children}
+      </body>
     </html>
   );
 }
