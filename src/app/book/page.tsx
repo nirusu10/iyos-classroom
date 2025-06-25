@@ -4,6 +4,7 @@ import { useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import AvailableSlots from "~/components/AvailableSlots";
+import { BookingForm } from "~/components/BookingForm";
 
 export default function BookingPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -29,7 +30,6 @@ export default function BookingPage() {
           minDate={new Date()}
           value={selectedDate}
           onClickDay={(date) => {
-            console.log(date);
             setSelectedDate(date);
           }}
         />
@@ -39,6 +39,12 @@ export default function BookingPage() {
         <AvailableSlots
           date={format(selectedDate, "yyyy-MM-dd")}
           onSelectSlot={(slot) => setSelectedSlot(slot)}
+        />
+      )}
+      {selectedDate && (
+        <BookingForm
+          selectedDate={selectedDate}
+          // You will pass selected slot and form data here later
         />
       )}
     </main>

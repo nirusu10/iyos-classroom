@@ -31,7 +31,8 @@ export const availableSlotsSchema = z.object({
 
 export const bookingSchema = z.object({
   teacherId: z.number(),
-  studentId: z.number(),
+  studentEmail: z.email(),
+  studentName: z.string().min(1),
   startTime: z.string().refine((val) => !isNaN(Date.parse(val)), {
     error: "Start time must be a valid ISO string",
   }),

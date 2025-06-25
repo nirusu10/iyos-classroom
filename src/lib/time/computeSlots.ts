@@ -4,7 +4,7 @@ import type { Availability, AvailabilityException, Booking } from "../types";
 
 export function computeAvailableSlots({
   date,
-  timeZone,
+  teacherTimeZone = "Asia/Tokyo",
   availabilities,
   exceptions,
   bookings,
@@ -12,14 +12,14 @@ export function computeAvailableSlots({
   interval = 10,
 }: {
   date: string; // YYYY-MM-DD
-  timeZone: string;
   availabilities: Availability[];
   exceptions: AvailabilityException[];
   bookings: Booking[];
   lessonLength?: number;
   interval?: number;
+  teacherTimeZone?: string;
 }) {
-  const day = new TZDate(`${date}T00:00:00`, timeZone);
+  const day = new TZDate(`${date}T00:00:00`, teacherTimeZone);
   const weekday = day.getDay();
 
   // Blocked entirely?
@@ -38,7 +38,7 @@ export function computeAvailableSlots({
       day.getDate(),
       Math.floor(block.startTimeMinutes / 60), // hours
       block.startTimeMinutes % 60, // minutes
-      timeZone,
+      teacherTimeZone,
     );
 
     const blockEnd = new TZDate(
@@ -47,7 +47,7 @@ export function computeAvailableSlots({
       day.getDate(),
       Math.floor(block.endTimeMinutes / 60),
       block.endTimeMinutes % 60,
-      timeZone,
+      teacherTimeZone,
     );
 
     for (
@@ -67,6 +67,5 @@ export function computeAvailableSlots({
       }
     }
   }
-
   return slots;
 }

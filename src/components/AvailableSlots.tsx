@@ -1,5 +1,6 @@
 "use client";
 
+import { TZDate } from "@date-fns/tz";
 import { format, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
 
@@ -68,9 +69,10 @@ export default function AvailableSlots({ date, onSelectSlot }: Props) {
         <p className="text-gray-500">No available slots for this day.</p>
       )}
 
-      <ul className="mt-4 flex flex-wrap gap-3">
+      <ul className="mt-4 flex flex-wrap justify-center gap-3">
         {slots.map((slot) => {
-          const time = format(parseISO(slot), "HH:mm");
+          const localTime = TZDate.tz(timeZone, slot);
+          const time = format(localTime, "HH:mm");
           return (
             <li key={slot}>
               <button

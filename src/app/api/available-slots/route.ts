@@ -47,11 +47,10 @@ export async function GET(request: Request) {
 
   const slots = computeAvailableSlots({
     date,
-    timeZone,
+    teacherTimeZone: "Asia/Tokyo",
     availabilities: a,
     exceptions: e,
     bookings: b,
   });
-
   return Response.json({ slots });
 }
