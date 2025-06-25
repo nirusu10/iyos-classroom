@@ -44,6 +44,7 @@ export default function BookingPage() {
       {selectedDate && (
         <BookingForm
           selectedDate={selectedDate}
+          selectedSlot={selectedSlot}
           // You will pass selected slot and form data here later
         />
       )}

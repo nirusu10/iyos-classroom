@@ -1,22 +1,73 @@
 "use client";
+import { addMinutes } from "date-fns";
 import { useState, type FormEvent } from "react";
+import { bookingSchema } from "~/lib/validation/schemas";
 
 export function BookingForm({
   selectedSlot,
 }: {
   selectedDate: Date;
-  selectedSlot?: string | null;
+  selectedSlot: string | null;
 }) {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
-  const [status, setStatus] = useState<
-    "idle" | "submitting" | "success" | "error"
-  >("idle");
-  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log("SUBMITTING FORM");
+    setSubmitting(true);
+
+    console.log(selectedSlot);
+
+    if (!selectedSlot || isNaN(Date.parse(selectedSlot))) {
+      setMessage("Invalid time slot selected");
+      setSubmitting(false);
+      return;
+    }
+
+    const start = new Date(selectedSlot);
+    const end = addMinutes(start, 50);
+
+    const payload = {
+      teacherId: 1,
+      studentName: name,
+      studentEmail: email,
+      startTime: start.toISOString(),
+      endTime: end.toISOString(),
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    };
+
+    const parsed = bookingSchema.safeParse(payload);
+    if (!parsed.success) {
+      setMessage("Invalid form data");
+      setSubmitting(false);
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/book", {
+        method: "POST",
+        body: JSON.stringify(parsed.data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Booking failed");
+      setMessage("✅ Lesson successfully booked!");
+      setName("");
+      setEmail("");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setMessage(error.message ?? "Unknown error");
+      } else {
+        setMessage("Unknown error");
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -49,13 +100,19 @@ export function BookingForm({
           />
           <button
             type="submit"
-            disabled={status === "submitting"}
+            disabled={submitting}
             className="rounded bg-blue-700 px-4 py-2 font-bold text-white hover:bg-blue-600 disabled:opacity-50 dark:bg-blue-300 dark:text-black"
           >
-            {status === "submitting" ? "Booking..." : "Confirm Booking"}
+            {submitting ? "Booking..." : "Confirm Booking"}
           </button>
-          {status === "error" && error && (
-            <p className="text-sm text-red-500">{error}</p>
+          {message && (
+            <p
+              className={`text-sm ${
+                message.startsWith("✅") ? "text-green-600" : "text-red-500"
+              }`}
+            >
+              {message}
+            </p>
           )}
         </form>
       )}
