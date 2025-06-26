@@ -111,3 +111,19 @@ export const bookings = createTable(
     unique("unique_student_slot").on(t.studentId, t.startTime),
   ],
 );
+
+export const materials = createTable(
+  "materials",
+  {
+    id: int({ mode: "number" }).primaryKey({ autoIncrement: true }),
+    title: text({ length: 256 }).notNull(),
+    description: text().notNull(),
+    pdfUrl: text({ length: 1024 }).notNull(), // or video/resource URL
+    level: text({ enum: ["beginner", "intermediate", "advanced"] }).notNull(),
+    createdAt: int({ mode: "timestamp" })
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    updatedAt: int({ mode: "timestamp" }).$onUpdate(() => new Date()),
+  },
+  (t) => [index("level_idx").on(t.level)],
+);
