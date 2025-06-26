@@ -6,7 +6,7 @@ import { bookings, students } from "~/server/db/schema";
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const body: unknown = await request.json();
     const result = bookingSchema.safeParse(body);
 
     if (!result.success) {

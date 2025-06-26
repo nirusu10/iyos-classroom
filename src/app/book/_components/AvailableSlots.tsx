@@ -1,8 +1,9 @@
 "use client";
 
 import { TZDate } from "@date-fns/tz";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import { useEffect, useState } from "react";
+import { availableSlotsSchema } from "~/lib/validation/schemas";
 
 type Props = {
   date: string;
@@ -29,14 +30,17 @@ export default function AvailableSlots({ date, onSelectSlot }: Props) {
         );
 
         const raw: unknown = await response.json();
+        const parsed = availableSlotsSchema.safeParse(raw);
 
-        const data = raw as { slots?: string[]; error?: string };
-
-        if (!response.ok) {
-          throw new Error(data.error ?? "Failed to fetch slots");
+        if (!response.ok || !parsed.success) {
+          throw new Error(
+            parsed.success
+              ? (parsed.data.error ?? "Failed to fetch slots")
+              : "Invalid response format",
+          );
         }
 
-        setSlots(data.slots ?? []);
+        setSlots(parsed.data.slots ?? []);
       } catch (error: unknown) {
         if (error instanceof Error) {
           setError(error.message ?? "Unknown error");

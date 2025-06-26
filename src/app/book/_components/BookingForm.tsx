@@ -1,7 +1,13 @@
 "use client";
 import { addMinutes } from "date-fns";
 import { useState, type FormEvent } from "react";
+import { z } from "zod";
 import { bookingSchema } from "~/lib/validation/schemas";
+
+const bookingResponseSchema = z.union([
+  z.object({ success: z.literal(true) }),
+  z.object({ error: z.string() }),
+]);
 
 export function BookingForm({
   selectedSlot,
@@ -54,17 +60,23 @@ export function BookingForm({
         },
       });
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Booking failed");
+      const json: unknown = await response.json();
+      const result = bookingResponseSchema.safeParse(json);
+
+      if (!result.success) {
+        throw new Error("Invalid server response");
+      }
+
+      if ("error" in result.data) {
+        throw new Error(result.data.error);
+      }
+
       setMessage("✅ Lesson successfully booked!");
       setName("");
       setEmail("");
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setMessage(error.message ?? "Unknown error");
-      } else {
-        setMessage("Unknown error");
-      }
+    } catch (error) {
+      const err = error as Error;
+      setMessage(err.message ?? "Unknown error");
     } finally {
       setSubmitting(false);
     }

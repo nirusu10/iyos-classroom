@@ -25,8 +25,8 @@ export const availabilityExceptionSchema = z.object({
 });
 
 export const availableSlotsSchema = z.object({
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), // 'YYYY-MM-DD'
-  timeZone: z.string(), // TZ like 'Europe/Berlin'
+  slots: z.array(z.string()).optional(),
+  error: z.string().optional(),
 });
 
 export const bookingSchema = z.object({
@@ -49,3 +49,4 @@ export type AvailabilityExceptionInput = z.infer<
   typeof availabilityExceptionSchema
 >;
 export type AvailableSlotsInput = z.infer<typeof availableSlotsSchema>;
+export type AvailableSlotsResponse = z.infer<typeof availableSlotsSchema>;

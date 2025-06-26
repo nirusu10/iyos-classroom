@@ -25,7 +25,7 @@ export async function GET(request: Request) {
     return Response.json({ error: "Invalid query" }, { status: 400 });
   }
 
-  const { date, timeZone } = parsed.data;
+  const { date } = parsed.data;
   const teacherId = 1; // single teacher for now
 
   const [a, e, b] = await Promise.all([
