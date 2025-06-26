@@ -118,7 +118,7 @@ export const materials = createTable(
     id: int({ mode: "number" }).primaryKey({ autoIncrement: true }),
     title: text({ length: 256 }).notNull(),
     description: text().notNull(),
-    pdfUrl: text({ length: 1024 }).notNull(), // or video/resource URL
+    Url: text({ length: 1024 }).notNull(), // or video/resource URL
     level: text({ enum: ["beginner", "intermediate", "advanced"] }).notNull(),
     createdAt: int({ mode: "timestamp" })
       .default(sql`(unixepoch())`)

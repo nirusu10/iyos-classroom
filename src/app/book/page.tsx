@@ -3,8 +3,8 @@ import { format } from "date-fns";
 import { useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import AvailableSlots from "~/components/AvailableSlots";
-import { BookingForm } from "~/components/BookingForm";
+import AvailableSlots from "./_components/AvailableSlots";
+import { BookingForm } from "./_components/BookingForm";
 
 export default function BookingPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
